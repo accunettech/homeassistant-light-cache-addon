@@ -43,8 +43,8 @@ def save_state(entity_id, state):
     conn.commit()
 
 def restore_states(client):
-    logging.info("Waiting 10 seconds to allow lights to connect to network...")
-    time.sleep(10)
+    logging.info("Waiting 30 seconds to allow lights to connect to network...")
+    time.sleep(30)
     logging.info("Restoring light states...")
 
     c.execute("SELECT entity_id, state FROM light_state")
