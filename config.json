@@ -1,0 +1,30 @@
+{
+  "name": "MQTT Light Cache",
+  "version": "1.0.0",
+  "slug": "homeassistant_light_cache",
+  "description": "Caches and restores MQTT light states when UPS is not on battery.",
+  "startup": "application",
+  "boot": "auto",
+  "init": false,
+  "log_level": "debug",
+  "host_network": true,
+  "homeassistant_api": true,
+  "full_access": false,
+  "tmpfs": ["/run"],
+  "options": {
+    "mqtt_username": "mqtt_user",
+    "mqtt_password": "a5s4GH63"
+  },
+  "schema": {
+    "log_level": "list(trace|debug|info|notice|warning|error|fatal)?",
+    "mqtt_username": "str",
+    "mqtt_password": "str"
+  },
+  "arch": ["amd64", "aarch64"],
+  "map": ["config:rw"],
+  "services": ["mqtt:need"],
+  "resources": {
+    "memory": 128
+  }
+}
+
