@@ -43,8 +43,8 @@ def save_state(entity_id, state):
     conn.commit()
 
 def restore_states(client):
-    logging.info("Waiting 30 seconds to allow lights to connect to network...")
-    time.sleep(30)
+    logging.info("Waiting 10 seconds to allow lights to connect to network...")
+    time.sleep(10)
     logging.info("Restoring light states...")
 
     c.execute("SELECT entity_id, state FROM light_state")
@@ -63,7 +63,8 @@ def restore_states(client):
         else:
             logging.info(f"[RESTORE] Timeout for {entity_id}")
 
-    global RESTORE_DONE
+    global UPS_ON_BATTERY, RESTORE_DONE
+    UPS_ON_BATTERY = False
     RESTORE_DONE = True
 
 def on_message(client, userdata, msg):
@@ -81,7 +82,6 @@ def on_message(client, userdata, msg):
             RESTORE_DONE = False
         elif "OL" in payload and UPS_ON_BATTERY:
             logging.info("[UPS] Power restored")
-            UPS_ON_BATTERY = False
             threading.Thread(target=restore_states, args=(client,)).start()
 
     elif "light_state_cache/light" in topic:
