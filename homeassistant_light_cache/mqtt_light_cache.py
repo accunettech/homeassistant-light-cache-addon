@@ -124,6 +124,7 @@ def set_light_state(entity_id, state):
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
 def maybe_send_email(body):
+    logger.debug(f"Send email is {SEND_EMAIL_ENABLED}")
     if SEND_EMAIL_ENABLED:
         logging.info(f"Sending email notification to {TO_EMAIL}")
         now = datetime.now().astimezone()
