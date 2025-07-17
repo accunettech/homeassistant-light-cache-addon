@@ -89,7 +89,7 @@ def restore_states(client):
     AWAITING_RESTORE = False
 
 def on_message(client, userdata, msg):
-    global UPS_ON_BATTERY, RESTORE_DONE
+    global UPS_ON_BATTERY, AWAITING_RESTORE, RESTORE_DONE
 
     logging.debug(f"Received MQTT message: topic={msg.topic}, payload={msg.payload.decode()}")
 
