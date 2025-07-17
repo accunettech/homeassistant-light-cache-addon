@@ -38,7 +38,7 @@ try:
         NUT_TOPIC = opts.get("nut_topic", "NUT/ups/status")
         SEND_EMAIL_ENABLED = opts.get('send_email', False)
         if SEND_EMAIL_ENABLED:
-            FROM_EMAIL = opts.get('send_email', '')
+            FROM_EMAIL = opts.get('from_email', '')
             TO_EMAIL = opts.get('to_email', '')
             SMTP_SERVER = opts.get('smtp_server', '')
             SMTP_PORT = opts.get('smtp_port', '')
