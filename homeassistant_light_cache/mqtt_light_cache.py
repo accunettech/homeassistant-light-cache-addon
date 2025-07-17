@@ -95,7 +95,7 @@ def on_message(client, userdata, msg):
     payload = msg.payload.decode()
 
     if topic == NUT_TOPIC:
-        if 'OB' in payload and !UPS_ON_BATTERY:  #Only handle going to battery once until no longer on battery to prevent charge status changes triggering another alert
+        if 'OB' in payload and not UPS_ON_BATTERY:  #Only handle going to battery once until no longer on battery to prevent charge status changes triggering another alert
             logging.info("[UPS] On battery")
             maybe_send_email('Power lost')
             UPS_ON_BATTERY = True
