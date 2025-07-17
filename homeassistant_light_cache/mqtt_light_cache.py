@@ -100,13 +100,13 @@ def on_message(client, userdata, msg):
     if topic == NUT_TOPIC:
         if 'OB' in payload and not UPS_ON_BATTERY:  #Only handle going to battery once until no longer on battery to prevent charge status changes triggering another alert
             logging.info("[UPS] On battery")
-            maybe_send_email('Power lost')
+            maybe_send_email('Power Loss Notification', 'Power lost')
             UPS_ON_BATTERY = True
             RESTORE_DONE = False
         elif 'OL' in payload and UPS_ON_BATTERY and not AWAITING_RESTORE:
             logging.info("[UPS] Power restored")
             AWAITING_RESTORE = True
-            maybe_send_email('Power restored')
+            maybe_send_email('Power Restored Notification', 'Power restored')
             threading.Thread(target=restore_states, args=(client,)).start()
 
     elif "light_state_cache/light" in topic:
@@ -137,14 +137,14 @@ def set_light_state(entity_id, state):
     else:
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
-def maybe_send_email(body):
+def maybe_send_email(subject, body):
     try:
         if SEND_EMAIL_ENABLED:
             logging.info(f"Sending email notification to {TO_EMAIL}")
             now = datetime.now().astimezone()
             timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
             msg = MIMEText(f"{timestamp} - {body}")
-            msg['Subject'] = 'HomeAssistant Notification'
+            msg['Subject'] = subject
             msg['From'] = f"Home Assistant Notifications <{FROM_EMAIL}>"
             msg['To'] = TO_EMAIL
         
