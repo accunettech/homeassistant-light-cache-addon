@@ -6,6 +6,7 @@
   "startup": "application",
   "boot": "auto",
   "host_network": true,
+  "homeassistant_api": true,
   "options": {
     "mqtt_username": "mqtt_user",
     "mqtt_password": "a5s4GH63",
