@@ -38,11 +38,6 @@ SMTP_PORT = ""
 SMTP_USER = ""
 SMTP_PASSWORD = ""
 
-print(f"[DEBUG] Current working directory: {os.getcwd()}")
-print(f"[DEBUG] DB file path: {DB_FILE}")
-print(f"[DEBUG] /data exists: {os.path.isdir('/data')}")
-print(f"[DEBUG] Can write to /data: {os.access('/data', os.W_OK)}")
-
 conn = sqlite3.connect(DB_FILE, check_same_thread=False)
 c = conn.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS light_state (
@@ -148,16 +143,16 @@ def main():
             opts = json.load(f)
             MQTT_USERNAME = opts.get("mqtt_username")
             MQTT_PASSWORD = opts.get("mqtt_password")
-            SEND_EMAIL_ENABLED = config.get('send_email', False)
+            SEND_EMAIL_ENABLED = opts.get('send_email', False)
             if SEND_EMAIL_ENABLED:
-                FROM_EMAIL = config.get('send_email', '')
-                TO_EMAIL = config.get('to_email', '')
-                SMTP_SERVER = config.get('smtp_server', '')
-                SMTP_PORT = config.get('smtp_port', '')
-                SMTP_USER = config.get('smtp_user', '')
-                SMTP_PASSWORD = config.get('smtp_password', '')
+                FROM_EMAIL = opts.get('send_email', '')
+                TO_EMAIL = opts.get('to_email', '')
+                SMTP_SERVER = opts.get('smtp_server', '')
+                SMTP_PORT = opts.get('smtp_port', '')
+                SMTP_USER = opts.get('smtp_user', '')
+                SMTP_PASSWORD = opts.get('smtp_password', '')
 
-        logger.info(f"Send email is {SEND_EMAIL_ENABLED}")
+        logger.debug(f"Send email is {SEND_EMAIL_ENABLED}")
     except Exception as e:
         logging.error(f"Failed to read options.json: {e}")
 
