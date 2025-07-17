@@ -141,7 +141,7 @@ def maybe_send_email(body):
             timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
             msg = MIMEText(f"{timestamp} - {body}")
             msg['Subject'] = 'HomeAssistant Notification'
-            msg['From'] = FROM_EMAIL
+            msg['From'] = f"Home Assistant Notifications <{FROM_EMAIL}>"
             msg['To'] = TO_EMAIL
         
             with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
