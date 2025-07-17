@@ -8,6 +8,7 @@
   "host_network": true,
   "homeassistant_api": true,
   "options": {
+    "mqtt_broker": "mosquito-core",
     "mqtt_username": "mqtt_user",
     "mqtt_password": "a5s4GH63",
     "send_email": false,
