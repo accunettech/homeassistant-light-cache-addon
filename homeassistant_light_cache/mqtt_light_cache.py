@@ -1,4 +1,5 @@
 # mqtt_light_cache.py
+from datetime import datetime
 import time
 import os
 import sqlite3
@@ -9,13 +10,14 @@ import paho.mqtt
 import requests
 import sys
 import logging
+import smtplib
+from email.mime.text import MIMEText
 
 logging.basicConfig(
     level=logging.DEBUG,
     format='[%(asctime)s] [%(levelname)s] %(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'
 )
-
 
 sys.stdout.reconfigure(line_buffering=True)
 logging.info(f"Using paho-mqtt version: {paho.mqtt.__version__}")
@@ -28,6 +30,13 @@ DB_FILE = "/config/light_state_cache.db"
 STATE_CACHE = {}
 UPS_ON_BATTERY = False
 RESTORE_DONE = True
+SEND_EMAIL_ENABLED = False
+FROM_EMAIL = ""
+TO_EMAIL = ""
+SMTP_SERVER = ""
+SMTP_PORT = ""
+SMTP_USER = ""
+SMTP_PASSWORD = ""
 
 conn = sqlite3.connect(DB_FILE, check_same_thread=False)
 c = conn.cursor()
@@ -78,10 +87,12 @@ def on_message(client, userdata, msg):
     if topic == NUT_TOPIC:
         if "OB" in payload:
             logging.info("[UPS] On battery")
+            maybe_send_email('Power lost')
             UPS_ON_BATTERY = True
             RESTORE_DONE = False
         elif "OL" in payload and UPS_ON_BATTERY:
             logging.info("[UPS] Power restored")
+            maybe_send_email('Power restored')
             threading.Thread(target=restore_states, args=(client,)).start()
 
     elif "light_state_cache/light" in topic:
@@ -112,12 +123,34 @@ def set_light_state(entity_id, state):
     else:
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
+def maybe_send_email(body):
+    if SEND_EMAIL_ENABLED:
+        now = datetime.now().astimezone()
+        timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
+        msg = MIMEText(f"{timestamp} - {body}")
+        msg['Subject'] = 'HomeAssistant Notification'
+        msg['From'] = FROM_EMAIL
+        msg['To'] = TO_EMAIL
+    
+        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
+            server.login(SMTP_USER, SMTP_PORT)
+            server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
+
 def main():
     try:
         with open("/data/options.json") as f:
             opts = json.load(f)
             MQTT_USERNAME = opts.get("mqtt_username")
             MQTT_PASSWORD = opts.get("mqtt_password")
+            SEND_EMAIL_ENABLED = config.get('send_email', False)
+            if SEND_EMAIL_ENABLED:
+                FROM_EMAIL = config.get('send_email', '')
+                TO_EMAIL = config.get('to_email', '')
+                SMTP_SERVER = config.get('smtp_server', '')
+                SMTP_PORT = config.get('smtp_port', '')
+                SMTP_USER = config.get('smtp_user', '')
+                SMTP_PASSWORD = config.get('smtp_password', '')
+            
     except Exception as e:
         logging.error(f"Failed to read options.json: {e}")
 
