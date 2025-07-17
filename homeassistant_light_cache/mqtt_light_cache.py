@@ -119,12 +119,13 @@ def set_light_state(entity_id, state):
 
     resp = requests.post(url, headers=headers, json=data)
     if resp.status_code != 200:
-        logging.info(f"[ERROR] Failed to set {state} for {entity_id}: {resp.text}")
+        logging.error(f"Failed to set {state} for {entity_id}: {resp.text}")
     else:
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
 def maybe_send_email(body):
     if SEND_EMAIL_ENABLED:
+        logging.info(f"Sending email notification to {TO_EMAIL}")
         now = datetime.now().astimezone()
         timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
         msg = MIMEText(f"{timestamp} - {body}")
