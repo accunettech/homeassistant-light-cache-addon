@@ -38,6 +38,23 @@ SMTP_PORT = ""
 SMTP_USER = ""
 SMTP_PASSWORD = ""
 
+try:
+    with open("/data/options.json") as f:
+        opts = json.load(f)
+        MQTT_USERNAME = opts.get("mqtt_username")
+        MQTT_PASSWORD = opts.get("mqtt_password")
+        SEND_EMAIL_ENABLED = opts.get('send_email', False)
+        if SEND_EMAIL_ENABLED:
+            FROM_EMAIL = opts.get('send_email', '')
+            TO_EMAIL = opts.get('to_email', '')
+            SMTP_SERVER = opts.get('smtp_server', '')
+            SMTP_PORT = opts.get('smtp_port', '')
+            SMTP_USER = opts.get('smtp_user', '')
+            SMTP_PASSWORD = opts.get('smtp_password', '')
+            
+except Exception as e:
+    logging.error(f"Failed to read options.json: {e}")
+
 conn = sqlite3.connect(DB_FILE, check_same_thread=False)
 c = conn.cursor()
 c.execute("""CREATE TABLE IF NOT EXISTS light_state (
@@ -124,6 +141,7 @@ def set_light_state(entity_id, state):
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
 def maybe_send_email(body):
+    logging.debug(f"Send email is {SEND_EMAIL_ENABLED}")
     if SEND_EMAIL_ENABLED:
         logging.info(f"Sending email notification to {TO_EMAIL}")
         now = datetime.now().astimezone()
@@ -138,24 +156,6 @@ def maybe_send_email(body):
             server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
 
 def main():
-    try:
-        with open("/data/options.json") as f:
-            opts = json.load(f)
-            MQTT_USERNAME = opts.get("mqtt_username")
-            MQTT_PASSWORD = opts.get("mqtt_password")
-            SEND_EMAIL_ENABLED = opts.get('send_email', False)
-            if SEND_EMAIL_ENABLED:
-                FROM_EMAIL = opts.get('send_email', '')
-                TO_EMAIL = opts.get('to_email', '')
-                SMTP_SERVER = opts.get('smtp_server', '')
-                SMTP_PORT = opts.get('smtp_port', '')
-                SMTP_USER = opts.get('smtp_user', '')
-                SMTP_PASSWORD = opts.get('smtp_password', '')
-
-        logging.debug(f"Send email is {SEND_EMAIL_ENABLED}")
-    except Exception as e:
-        logging.error(f"Failed to read options.json: {e}")
-
     logging.debug("Creating MQTT client...")
     client = mqtt.Client()
 
