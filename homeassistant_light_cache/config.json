@@ -2,7 +2,7 @@
   "name": "MQTT Light Cache",
   "slug": "homeassistant_light_cache",
   "description": "Caches and restores MQTT light states when UPS is not on battery.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "startup": "application",
   "boot": "auto",
   "host_network": true,
