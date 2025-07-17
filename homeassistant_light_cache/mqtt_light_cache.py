@@ -22,11 +22,6 @@ logging.basicConfig(
 sys.stdout.reconfigure(line_buffering=True)
 logging.info(f"Using paho-mqtt version: {paho.mqtt.__version__}")
 
-print(f"[DEBUG] Current working directory: {os.getcwd()}")
-print(f"[DEBUG] DB file path: {DB_FILE}")
-print(f"[DEBUG] /data exists: {os.path.isdir('/data')}")
-print(f"[DEBUG] Can write to /data: {os.access('/data', os.W_OK)}")
-
 MQTT_BROKER = "core-mosquitto"
 MQTT_PORT = 1883
 LIGHT_TOPIC = "light_state_cache/+"
@@ -42,6 +37,11 @@ SMTP_SERVER = ""
 SMTP_PORT = ""
 SMTP_USER = ""
 SMTP_PASSWORD = ""
+
+print(f"[DEBUG] Current working directory: {os.getcwd()}")
+print(f"[DEBUG] DB file path: {DB_FILE}")
+print(f"[DEBUG] /data exists: {os.path.isdir('/data')}")
+print(f"[DEBUG] Can write to /data: {os.access('/data', os.W_OK)}")
 
 conn = sqlite3.connect(DB_FILE, check_same_thread=False)
 c = conn.cursor()
