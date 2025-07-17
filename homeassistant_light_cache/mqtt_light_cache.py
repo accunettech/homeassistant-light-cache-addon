@@ -25,6 +25,7 @@ logging.info(f"Using paho-mqtt version: {paho.mqtt.__version__}")
 DB_FILE = "/data/light_state_cache.db"
 STATE_CACHE = {}
 UPS_ON_BATTERY = False
+AWAITING_RESTORE = False
 RESTORE_DONE = True
 
 try:
@@ -85,6 +86,7 @@ def restore_states(client):
     global UPS_ON_BATTERY, RESTORE_DONE
     UPS_ON_BATTERY = False
     RESTORE_DONE = True
+    AWAITING_RESTORE = False
 
 def on_message(client, userdata, msg):
     global UPS_ON_BATTERY, RESTORE_DONE
@@ -99,8 +101,9 @@ def on_message(client, userdata, msg):
             logging.info("[UPS] On battery")
             maybe_send_email('Power lost')
             UPS_ON_BATTERY = True
+            AWAITING_RESTORE = True
             RESTORE_DONE = False
-        elif 'OL' in payload and UPS_ON_BATTERY:
+        elif 'OL' in payload and UPS_ON_BATTERY and not AWAITING_RESTORE:
             logging.info("[UPS] Power restored")
             maybe_send_email('Power restored')
             threading.Thread(target=restore_states, args=(client,)).start()
