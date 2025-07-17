@@ -152,7 +152,7 @@ def main():
                 SMTP_USER = opts.get('smtp_user', '')
                 SMTP_PASSWORD = opts.get('smtp_password', '')
 
-        logger.debug(f"Send email is {SEND_EMAIL_ENABLED}")
+        logging.debug(f"Send email is {SEND_EMAIL_ENABLED}")
     except Exception as e:
         logging.error(f"Failed to read options.json: {e}")
 
