@@ -9,26 +9,24 @@
   "options": {
     "mqtt_username": "mqtt_user",
     "mqtt_password": "a5s4GH63",
-    "send_email": false
+    "send_email": false,
+    "smtp_server": "",
+    "smtp_port": 465,
+    "smtp_user": "",
+    "smtp_password": "",
+    "from_email": "",
+    "to_email": ""
   },
   "schema": {
     "mqtt_username": "str",
     "mqtt_password": "str",
-    "send_email": "bool"
-  },
-  "conditional": {
-    "send_email": {
-      "true": {
-        "schema": {
-          "smtp_server": "str",
-          "smtp_port": "int",
-          "smtp_user": "str",
-          "smtp_password": "str",
-          "from_email": "str",
-          "to_email": "str"
-        }
-      }
-    }
+    "send_email": "bool",
+    "smtp_server": "str?",
+    "smtp_port": "int?",
+    "smtp_user": "str?",
+    "smtp_password": "str?",
+    "from_email": "str?",
+    "to_email": "str?"
   },
   "arch": ["amd64", "aarch64"]
 }
