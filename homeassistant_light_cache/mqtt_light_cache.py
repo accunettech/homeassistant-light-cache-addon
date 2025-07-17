@@ -22,27 +22,20 @@ logging.basicConfig(
 sys.stdout.reconfigure(line_buffering=True)
 logging.info(f"Using paho-mqtt version: {paho.mqtt.__version__}")
 
-MQTT_BROKER = "core-mosquitto"
-MQTT_PORT = 1883
-LIGHT_TOPIC = "light_state_cache/+"
-NUT_TOPIC = "NUT/ups/status"
 DB_FILE = "/data/light_state_cache.db"
 STATE_CACHE = {}
 UPS_ON_BATTERY = False
 RESTORE_DONE = True
-SEND_EMAIL_ENABLED = False
-FROM_EMAIL = ""
-TO_EMAIL = ""
-SMTP_SERVER = ""
-SMTP_PORT = ""
-SMTP_USER = ""
-SMTP_PASSWORD = ""
 
 try:
     with open("/data/options.json") as f:
         opts = json.load(f)
+        MQTT_BROKER = opts.get("mqtt_broker", "core-mosquitto")
+        MQTT_PORT = opts.get("mqtt_port", 1883)
         MQTT_USERNAME = opts.get("mqtt_username")
         MQTT_PASSWORD = opts.get("mqtt_password")
+        LIGHT_TOPIC = opts.get("light_topic", "light_state_cache/+")
+        NUT_TOPIC = opts.get("nut_topic", "NUT/ups/status")
         SEND_EMAIL_ENABLED = opts.get('send_email', False)
         if SEND_EMAIL_ENABLED:
             FROM_EMAIL = opts.get('send_email', '')
