@@ -95,12 +95,12 @@ def on_message(client, userdata, msg):
     payload = msg.payload.decode()
 
     if topic == NUT_TOPIC:
-        if payload == 'OB':
+        if 'OB' in payload and !UPS_ON_BATTERY:  #Only handle going to battery once until no longer on battery to prevent charge status changes triggering another alert
             logging.info("[UPS] On battery")
             maybe_send_email('Power lost')
             UPS_ON_BATTERY = True
             RESTORE_DONE = False
-        elif payload == 'OL' and UPS_ON_BATTERY:
+        elif 'OL' in payload and UPS_ON_BATTERY:
             logging.info("[UPS] Power restored")
             maybe_send_email('Power restored')
             threading.Thread(target=restore_states, args=(client,)).start()
