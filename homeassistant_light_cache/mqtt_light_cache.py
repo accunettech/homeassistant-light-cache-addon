@@ -63,6 +63,8 @@ def save_state(entity_id, state):
     conn.commit()
 
 def restore_states(client):
+    global UPS_ON_BATTERY, RESTORE_DONE, AWAITING_RESTORE
+    
     logging.info("Waiting 10 seconds to allow lights to connect to network...")
     time.sleep(10)
     logging.info("Restoring light states...")
@@ -83,7 +85,6 @@ def restore_states(client):
         else:
             logging.info(f"[RESTORE] Timeout for {entity_id}")
 
-    global UPS_ON_BATTERY, RESTORE_DONE
     UPS_ON_BATTERY = False
     RESTORE_DONE = True
     AWAITING_RESTORE = False
@@ -101,10 +102,10 @@ def on_message(client, userdata, msg):
             logging.info("[UPS] On battery")
             maybe_send_email('Power lost')
             UPS_ON_BATTERY = True
-            AWAITING_RESTORE = True
             RESTORE_DONE = False
         elif 'OL' in payload and UPS_ON_BATTERY and not AWAITING_RESTORE:
             logging.info("[UPS] Power restored")
+            AWAITING_RESTORE = True
             maybe_send_email('Power restored')
             threading.Thread(target=restore_states, args=(client,)).start()
 
