@@ -8,9 +8,12 @@
   "host_network": true,
   "homeassistant_api": true,
   "options": {
-    "mqtt_broker": "mosquito-core",
+    "mqtt_broker": "core-mosquito",
+    "mqtt_port": 1883,
     "mqtt_username": "mqtt_user",
     "mqtt_password": "a5s4GH63",
+    "light_topic": "light_state_cache/+",
+    "nut_topic": "NUT/ups/status",
     "send_email": false,
     "smtp_server": "",
     "smtp_port": 465,
@@ -20,8 +23,12 @@
     "to_email": ""
   },
   "schema": {
+    "mqtt_broker": "str",
+    "mqtt_port": "int",
     "mqtt_username": "str",
     "mqtt_password": "str",
+    "light_topic": "str",
+    "nut_topic": "str",
     "send_email": "bool",
     "smtp_server": "str?",
     "smtp_port": "int?",
