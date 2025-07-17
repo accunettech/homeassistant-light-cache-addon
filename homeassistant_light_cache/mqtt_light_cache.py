@@ -134,19 +134,21 @@ def set_light_state(entity_id, state):
         logging.info(f"[RESTORE] Set {state} for {entity_id}")
 
 def maybe_send_email(body):
-    logging.debug(f"Send email is {SEND_EMAIL_ENABLED}")
-    if SEND_EMAIL_ENABLED:
-        logging.info(f"Sending email notification to {TO_EMAIL}")
-        now = datetime.now().astimezone()
-        timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
-        msg = MIMEText(f"{timestamp} - {body}")
-        msg['Subject'] = 'HomeAssistant Notification'
-        msg['From'] = FROM_EMAIL
-        msg['To'] = TO_EMAIL
-    
-        with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
-            server.login(SMTP_USER, SMTP_PORT)
-            server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
+    try:
+        if SEND_EMAIL_ENABLED:
+            logging.info(f"Sending email notification to {TO_EMAIL}")
+            now = datetime.now().astimezone()
+            timestamp = now.strftime("%Y-%m-%d %H:%M:%S %Z")
+            msg = MIMEText(f"{timestamp} - {body}")
+            msg['Subject'] = 'HomeAssistant Notification'
+            msg['From'] = FROM_EMAIL
+            msg['To'] = TO_EMAIL
+        
+            with smtplib.SMTP_SSL(SMTP_SERVER, SMTP_PORT) as server:
+                server.login(SMTP_USER, SMTP_PASSWORD)
+                server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
+    except Exception as e:
+        logging.error(f"Failed to send email: {e}")
 
 def main():
     logging.debug("Creating MQTT client...")
